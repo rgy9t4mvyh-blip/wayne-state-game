@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Цена образования: Wayne State University</title>
+<style>
+:root{--bg:#f4f1ea;--card:#fff;--tx:#1f2430;--mut:#6b7280;--ac:#2f6fed;--ok:#1e9e5a;--bad:#d64545;--bd:#e3ded2;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171f;--card:#1e222d;--tx:#eef0f5;--mut:#9aa3b2;--ac:#6c9bff;--ok:#43c283;--bad:#ef6b6b;--bd:#2e3442}}
+:root[data-theme="dark"]{--bg:#14171f;--card:#1e222d;--tx:#eef0f5;--mut:#9aa3b2;--ac:#6c9bff;--ok:#43c283;--bad:#ef6b6b;--bd:#2e3442}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:640px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:1.5rem;margin:0 0 4px}
+.sub{color:var(--mut);margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:20px;margin-bottom:14px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-bottom:14px}
+.st{font-size:.85rem;font-weight:600}
+.tr{height:9px;background:var(--bd);border-radius:6px;overflow:hidden;margin-top:4px}
+.fl{height:100%;background:var(--ac);transition:width .4s,background .4s}
+.fl.low{background:var(--bad)}
+.rd{color:var(--mut);font-size:.85rem;margin:0 0 6px}
+.fact{background:color-mix(in srgb,var(--ac) 12%,transparent);border-radius:10px;padding:10px 12px;font-size:.9rem;margin:10px 0 14px}
+.q{font-size:1.1rem;font-weight:600;margin:0 0 8px}
+.opt{display:block;width:100%;text-align:left;font:inherit;color:inherit;background:transparent;border:2px solid var(--bd);border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer}
+.opt:hover{border-color:var(--ac)}
+.btn{font:inherit;font-weight:600;background:var(--ac);color:#fff;border:0;border-radius:12px;padding:12px 20px;cursor:pointer}
+.big{font-size:3rem;margin:0}
+.res{margin:10px 0 14px}
+.hide{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎓 Цена образования</h1>
+  <p class="sub">Игра по видео «Wayne State University Student Interview: Thoughts on rising costs of education»</p>
+
+  <div id="start" class="card">
+    <p class="big">💸</p>
+    <p>Ты — студент Wayne State University в районе Детройта. Учёба стоит дорого, поэтому приходится работать, искать стипендию и думать о будущем. Пройди 6 событий семестра и постарайся, чтобы ни один показатель не упал до нуля.</p>
+    <p class="sub">Ситуации в игре упрощены, а «Факты из видео» взяты из интервью.</p>
+    <button class="btn" id="go">Начать семестр</button>
+  </div>
+
+  <div id="game" class="hide">
+    <div class="card stats" id="stats"></div>
+    <div class="card">
+      <p class="rd" id="rd"></p>
+      <p class="q" id="q"></p>
+      <div class="fact" id="fact"></div>
+      <div id="opts"></div>
+      <div class="res hide" id="res"></div>
+      <button class="btn hide" id="next">Дальше →</button>
+    </div>
+  </div>
+
+  <div id="end" class="card hide">
+    <p class="big" id="emoji"></p>
+    <h2 id="title" style="margin:0 0 8px"></h2>
+    <p id="txt"></p>
+    <div class="fact" id="idea"></div>
+    <button class="btn" id="again">Сыграть ещё раз</button>
+  </div>
+</div>
+
+<script>
+var S=[["💰","Бюджет"],["😮‍💨","Силы"],["📚","Учёба"],["💼","Карьера"]];
+var E=[
+{q:"Пришёл счёт за семестр",f:"Факт из видео: обучение стоит примерно 9000–12000 долларов за семестр.",o:[
+ ["Взять смены на второй работе в кампусе",[15,-15,0,0],"Деньги появились, но свободного времени стало меньше."],
+ ["Подать заявки на стипендии и гранты",[20,-10,-5,0],"Это много бумаг, зато помощь может быть существенной."],
+ ["Попросить денег у родителей",[5,0,0,0],"Помощь небольшая: по видео, поддержка родителей минимальна."]]},
+{q:"Смена на работе совпала с подготовкой к экзамену",f:"Факт из видео: герой работает на двух работах в кампусе.",o:[
+ ["Пойти на смену",[15,-5,-15,0],"Деньги есть, а конспекты остались непрочитанными."],
+ ["Остаться учить",[-10,-5,15,0],"Экзамен под контролем, но кошелёк стал легче."],
+ ["Договориться и поменяться сменами",[5,-10,5,0],"Вышло компромиссное решение, но пришлось поторопиться."]]},
+{q:"Пора подтвердить стипендию",f:"Факт из видео: герой получил стипендию.",o:[
+ ["Подготовить документы заранее",[15,-10,0,0],"Стипендия сохранена, а нервов потрачено немного."],
+ ["Отложить на последний день",[-10,5,0,0],"Едва успел, и теперь есть риск потерять выплату."]]},
+{q:"Wayne State University объявляет о росте платы",f:"Факт из видео: герой критикует управление школами, которое ориентировано на прибыль, а не на студентов.",o:[
+ ["Выступить на встрече со студентами",[0,-10,0,10],"Тебя услышали, и ты нашёл единомышленников."],
+ ["Промолчать и урезать расходы",[10,-5,0,-5],"Бюджет спокойнее, а проблема осталась."],
+ ["Уменьшить учебную нагрузку",[5,5,-10,0],"Платить меньше, но учиться дольше."]]},
+{q:"Экономика сжимает рынок труда",f:"Факт из видео: из-за экономики сложнее искать работу и платить за учёбу.",o:[
+ ["Разослать резюме в 20 компаний",[0,-15,0,15],"Много усилий, но появились отклики."],
+ ["Подождать выпуска",[0,10,0,-10],"Отдохнул, но время идёт."],
+ ["Сходить на ярмарку вакансий",[-5,-5,0,10],"Живое общение дало пару контактов."]]},
+{q:"Идея: программа прямой связи студентов с работодателями",f:"Факт из видео: герой предлагает, чтобы студенты обращались к работодателям напрямую, и тогда образование принесёт больше пользы.",o:[
+ ["Написать работодателям со своим проектом",[0,-10,5,20],"Ты сам делаешь то, что предлагает герой видео."],
+ ["Поддержать идею письмом декану",[0,0,5,10],"Шаг к изменениям для всех студентов."],
+ ["Решить, что это не твоя забота",[0,5,0,0],"Спокойнее, но ничего не меняется."]]}
+];
+var v,i,locked;
+function $(x){return document.getElementById(x)}
+function show(x){["start","game","end"].forEach(function(k){$(k).classList.toggle("hide",k!==x)})}
+function hud(){
+  $("stats").innerHTML=S.map(function(s,k){var n=Math.max(0,Math.min(100,v[k]));
+    return '<div class="st">'+s[0]+" "+s[1]+": "+n+'<div class="tr"><div class="fl'+(n<=25?" low":"")+'" style="width:'+n+'%"></div></div></div>'}).join("")}
+function start(){v=[50,50,50,50];i=0;show("game");render()}
+function render(){
+  var e=E[i];locked=false;hud();
+  $("rd").textContent="Событие "+(i+1)+" из "+E.length;
+  $("q").textContent=e.q;$("fact").textContent=e.f;
+  $("res").classList.add("hide");$("next").classList.add("hide");
+  var box=$("opts");box.innerHTML="";
+  e.o.forEach(function(o){var b=document.createElement("button");b.className="opt";b.textContent=o[0];b.onclick=function(){pick(o)};box.appendChild(b)});
+}
+function fmt(d){return S.map(function(s,k){return d[k]?s[0]+(d[k]>0?" +":" ")+d[k]:""}).filter(Boolean).join("  ")}
+function pick(o){
+  if(locked)return;locked=true;
+  for(var k=0;k<4;k++)v[k]=Math.min(100,v[k]+o[1][k]);
+  hud();
+  $("opts").innerHTML="";
+  $("res").innerHTML="<b>"+o[0]+"</b><br>"+o[2]+"<br><small>"+fmt(o[1])+"</small>";
+  $("res").classList.remove("hide");
+  var dead=v.some(function(x){return x<=0});
+  $("next").textContent=(dead||i===E.length-1)?"Итог →":"Дальше →";
+  $("next").classList.remove("hide");
+}
+function finish(){
+  show("end");
+  var dead=v.some(function(x){return x<=0});
+  var avg=v.reduce(function(a,b){return a+Math.max(0,b)},0)/4;
+  var low=S[v.indexOf(Math.min.apply(null,v))][1];
+  var t,em,x;
+  if(dead){em="😵";t="Семестр не удался";x="Показатель «"+low+"» упал до нуля. Совмещать учёбу, работу и расходы очень трудно."}
+  else if(avg>=65){em="🏆";t="Отличный семестр!";x="Ты удержал баланс между деньгами, силами, учёбой и карьерой. Средний показатель: "+Math.round(avg)+"."}
+  else if(avg>=45){em="👍";t="Семестр пройден";x="Получилось пройти семестр, но есть слабое место: «"+low+"». Средний показатель: "+Math.round(avg)+"."}
+  else{em="😓";t="Еле дотянул";x="Семестр закончился, но результаты невысокие. Слабее всего «"+low+"». Средний показатель: "+Math.round(avg)+"."}
+  $("emoji").textContent=em;$("title").textContent=t;$("txt").textContent=x;
+  $("idea").textContent="Идея героя видео: программа, в которой студенты обращаются к работодателям напрямую, чтобы образование было полезнее и помогало найти работу после выпуска.";
+}
+$("go").onclick=start;$("again").onclick=start;
+$("next").onclick=function(){var dead=v.some(function(x){return x<=0});if(dead||i===E.length-1)finish();else{i++;render()}};
+</script>
+</body>
+</html>
